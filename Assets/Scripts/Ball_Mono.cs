@@ -6,7 +6,9 @@ using UnityEngine.Serialization;
 
 public class Ball_Mono : MonoBehaviour
 {
+    public Vector3 startingVelocity = new Vector3(0.1f, 0.1f, 0.1f);
     public Vector3 velocity;
+    public float maxSpeed;
     public float screenBoundsY = 4; 
     public float screenBoundsX = 8.5f;
     [Range(1f, 1.5f)]public float accelerationRate;
@@ -15,12 +17,19 @@ public class Ball_Mono : MonoBehaviour
 
     void Start()
     {
-        
+        velocity = startingVelocity;
     }
 
     private void Update()
     {
         HandleBounds();
+        if (velocity == Vector3.zero)
+        {
+            if (Input.anyKeyDown)
+            {
+                velocity = startingVelocity;
+            }
+        }
     }
     
     void FixedUpdate()
@@ -52,7 +61,12 @@ public class Ball_Mono : MonoBehaviour
         gameManager.AddVolley();
         if (col.gameObject.CompareTag("Paddle"))
         {
-            velocity.x = -velocity.x * accelerationRate;
+            velocity.x = -velocity.x;
+            if (Mathf.Abs(velocity.x) < maxSpeed)
+            {
+                 velocity.x = velocity.x * accelerationRate;
+                 Debug.Log("INCREASING SPEED");
+            }        
         }
     }
 }
